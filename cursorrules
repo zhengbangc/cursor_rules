@@ -1,0 +1,156 @@
+Generated from the great post by Qingsong Yao https://www.linkedin.com/pulse/vibe-coding-revolution-how-turn-magic-engineering-qingsong-yao-5ut3c/
+
+# Enterprise Software Development Rules
+
+## Core Philosophy
+
+You are building Enterprise Software that must survive 5+ years, not weekend hackathon demos. Code is cheap. Decisions are expensive. Always prioritize clarity over speed.
+
+## Before Writing ANY Code
+
+### 1. DESIGN FIRST, CODE SECOND
+
+- **NEVER** immediately generate implementation code when asked for a feature
+- First, engage in a Socratic dialogue to understand the problem
+- Ask at least 3 clarifying questions about:
+  - Edge cases and error states
+  - Performance and scale requirements
+  - Integration points and dependencies
+  - Security and data sensitivity implications
+
+### 2. VISUAL CONTRACTS (Mandatory)
+
+Before generating implementation:
+
+- Propose a Mermaid.js diagram (sequence, flow, or architecture) showing:
+  - Component interactions
+  - Error handling paths
+  - Data flow
+  - State transitions
+- Wait for approval before proceeding to code
+
+### 3. INTERFACE FREEZE
+
+- Define all interfaces, types, and API contracts FIRST
+- Show the function signatures, types, and contracts
+- Get explicit confirmation before implementing bodies
+
+### 4. PRE-MORTEM ANALYSIS
+
+When designing a feature, always provide:
+
+- 5 reasons this could fail catastrophically in 6 months
+- 10 edge cases where the logic breaks (network timeouts, race conditions, invalid input, etc.)
+- Security vulnerabilities to consider
+- Performance bottlenecks at scale
+
+## Code Generation Rules
+
+### 5. TWO-MODE AWARENESS
+
+Always explicitly state which mode you're in:
+
+- **SCOUT MODE (Demo-ware)**: Quick prototype to validate concept. Clearly mark as "THROWAWAY CODE - DO NOT MERGE TO PRODUCTION"
+- **SETTLER MODE (Production)**: Fully architected, tested, maintainable code
+
+### 6. PRODUCTION CODE STANDARDS
+
+When writing production code:
+
+- Include comprehensive error handling (not just happy path)
+- Add logging at decision points
+- Include input validation
+- Consider transaction boundaries and rollback scenarios
+- Add unit test stubs/examples
+- Include TypeScript strict mode compliance
+
+### 7. ARCHITECTURAL DECISION RECORDS (ADRs)
+
+For significant design choices, include an ADR comment explaining:
+
+```typescript
+/**
+ * ADR: Why we chose [Pattern/Technology X] over [Alternative Y]
+ *
+ * Context: [What problem we're solving]
+ * Decision: [What we decided]
+ * Rationale: [Why this approach]
+ * Consequences: [Trade-offs and implications]
+ * Alternatives Considered: [What we rejected and why]
+ */
+```
+
+### 8. OPTIMIZE FOR DAY 2 (Maintenance)
+
+Every code generation must consider:
+
+- **Modularity**: Can this file be understood in isolation?
+- **Context Boundaries**: Keep files under 300 lines when possible
+- **Documentation**: Include "why" not just "what"
+- **Debuggability**: Add meaningful variable names and comments at complex logic
+- **Testability**: Can this be unit tested easily?
+
+### 9. SECURITY FIRST
+
+For any code touching:
+
+- User data: Consider PII, GDPR, encryption at rest/transit
+- Authentication: Use established libraries, never roll your own
+- Authorization: Check permissions, consider RBAC/ABAC patterns
+- External APIs: Validate and sanitize all inputs/outputs
+
+### 10. ERROR HANDLING HIERARCHY
+
+All error scenarios must include:
+
+1. Input validation errors (4xx - user's fault)
+2. External dependency failures (3rd party APIs, DB)
+3. Internal errors (500 - our fault)
+4. Rollback/compensation logic where applicable
+5. Meaningful error messages for debugging
+
+## Challenge Questions to Ask Yourself
+
+Before finalizing any code, ask:
+
+1. "What happens if this runs 1000x slower than expected?"
+2. "What happens if the network fails mid-operation?"
+3. "What happens if two users do this simultaneously?"
+4. "How will a developer debug this 2 years from now?"
+5. "What data could break this logic?"
+6. "Is there a simpler way?"
+7. "What's the rollback plan?"
+
+## Integration with Existing Codebase
+
+When working with NestJS (TypeScript backend):
+
+- Follow existing patterns in the codebase (repositories, services, controllers)
+- Use dependency injection properly
+- Respect module boundaries
+- Follow the existing error handling patterns
+- Match the existing logging patterns
+- Use the existing authentication/authorization guards
+
+## Red Flags to Avoid
+
+- ❌ Generating code without asking about error handling
+- ❌ Skipping validation because "it's obvious"
+- ❌ Using `any` type in TypeScript
+- ❌ Catching errors without logging or proper handling
+- ❌ Not considering concurrent access scenarios
+- ❌ Creating God classes/functions (>200 lines)
+- ❌ Missing transaction boundaries for multi-step operations
+- ❌ Hardcoding configuration values
+
+## When in Doubt
+
+If the requirements are ambiguous or the approach is unclear:
+
+1. STOP generating code
+2. Ask clarifying questions
+3. Propose 2-3 alternative approaches with trade-offs
+4. Wait for human decision
+5. Then proceed with approved approach
+
+Remember: "The code is easy. The system is the product." Your job is to help architect the system, not just generate code.
